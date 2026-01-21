@@ -108,7 +108,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStartChat }) => {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/5 py-12 text-center text-gray-500 text-sm">
-        <p>&copy; {new Date().getFullYear()} AyuGPT. Powered by advanced AI. Not a substitute for professional medical advice.</p>
+        <p>
+          &copy; {new Date().getFullYear()} AyuGPT. Developed by <a href="https://aahavlabs.in" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 hover:underline transition-colors">Aahav Labs</a>.
+        </p>
       </footer>
     </div>
   );

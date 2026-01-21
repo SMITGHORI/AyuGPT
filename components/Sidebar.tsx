@@ -144,9 +144,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <span>Clear conversations</span>
              </button>
            )}
-           <div className="flex items-center gap-3 w-full px-3 py-3 rounded-md text-sm text-gray-400">
-             <div className="w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center text-[10px] font-bold text-white">A</div>
-             <span className="flex-1 text-left">AyuGPT Free</span>
+           <div className="flex flex-col gap-1 w-full px-3 py-2 rounded-md">
+             <div className="flex items-center gap-3">
+               <div className="w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center text-[10px] font-bold text-white">A</div>
+               <span className="text-sm text-gray-200 font-medium">AyuGPT</span>
+             </div>
+             <a href="https://aahavlabs.in" target="_blank" rel="noreferrer" className="text-[10px] text-gray-500 hover:text-emerald-400 ml-8 transition-colors">
+                by Aahav Labs
+             </a>
            </div>
         </div>
       </div>
