@@ -1,0 +1,7 @@
+{
+  "name": "AyuGPT",
+  "description": "Your specialized AI companion for Ayurveda, Health, and Wellness advice.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
