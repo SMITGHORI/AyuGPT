@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, MessageSquare, Trash2, LogOut, Trash, Search, X } from 'lucide-react';
+import { Plus, MessageSquare, Trash2, LogOut, Trash, Search, X, Edit2 } from 'lucide-react';
 import { ChatSession } from '../types';
 
 interface SidebarProps {
@@ -10,6 +10,7 @@ interface SidebarProps {
   onNewChat: () => void;
   onSelectSession: (id: string) => void;
   onDeleteSession: (id: string, e: React.MouseEvent) => void;
+  onRenameSession: (session: ChatSession, e: React.MouseEvent) => void;
   onClearAll: () => void;
 }
 
@@ -21,6 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onNewChat,
   onSelectSession,
   onDeleteSession,
+  onRenameSession,
   onClearAll,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -109,16 +111,23 @@ const Sidebar: React.FC<SidebarProps> = ({
                     if (window.innerWidth < 768) onClose();
                   }}
                   className={`
-                    group relative flex items-center gap-3 px-3 py-3 text-sm rounded-md cursor-pointer break-all pr-10 transition-colors
-                    ${currentSessionId === session.id ? 'bg-[#343541] pr-10' : 'hover:bg-[#2A2B32] text-gray-300'}
+                    group relative flex items-center gap-3 px-3 py-3 text-sm rounded-md cursor-pointer break-all pr-14 transition-colors
+                    ${currentSessionId === session.id ? 'bg-[#343541] pr-14' : 'hover:bg-[#2A2B32] text-gray-300'}
                   `}
                 >
                   <MessageSquare size={16} className={`shrink-0 ${currentSessionId === session.id ? 'text-white' : 'text-gray-400'}`} />
                   <span className="truncate flex-1">{session.title}</span>
                   
-                  {/* Delete Button */}
+                  {/* Action Buttons (Edit & Delete) - Visible on hover or active */}
                   {(currentSessionId === session.id) && (
-                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center bg-inherit shadow-[-10px_0_10px_0_rgba(52,53,65,1)]">
+                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 bg-inherit shadow-[-10px_0_10px_0_rgba(52,53,65,1)] pl-2">
+                        <button 
+                            className="p-1 text-gray-400 hover:text-white transition-colors"
+                            onClick={(e) => onRenameSession(session, e)}
+                            title="Rename Chat"
+                        >
+                            <Edit2 size={14} />
+                        </button>
                         <button 
                             className="p-1 text-gray-400 hover:text-red-400 transition-colors"
                             onClick={(e) => onDeleteSession(session.id, e)}

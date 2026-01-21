@@ -1,4 +1,4 @@
-import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, Chat, GenerateContentResponse, Type } from "@google/genai";
 import { Message } from "../types";
 
 // Initialize the API client
@@ -90,5 +90,39 @@ export const generateChatTitle = async (firstMessage: string): Promise<string> =
         return response.text || "Health Chat";
     } catch (e) {
         return "Health Chat";
+    }
+}
+
+/**
+ * Generates a list of suggested titles based on the conversation history.
+ */
+export const generateTitleSuggestions = async (history: Message[]): Promise<string[]> => {
+    try {
+        // Use the last 6 messages to get the most recent context
+        const recentContext = history.slice(-6).map(m => `${m.role}: ${m.content}`).join('\n');
+        
+        const response = await ai.models.generateContent({
+            model: 'gemini-3-flash-preview',
+            contents: `Analyze the following conversation context and generate 4 distinct, creative, and short (3-6 words) titles for this chat session. 
+            The titles should be relevant to health, Ayurveda, or the specific topic discussed.
+            
+            Conversation Context:
+            ${recentContext}`,
+            config: {
+                responseMimeType: 'application/json',
+                responseSchema: {
+                    type: Type.ARRAY,
+                    items: { type: Type.STRING }
+                }
+            }
+        });
+
+        if (response.text) {
+            return JSON.parse(response.text);
+        }
+        return [];
+    } catch (e) {
+        console.error("Failed to generate title suggestions", e);
+        return [];
     }
 }

@@ -4,8 +4,9 @@ import Sidebar from './components/Sidebar';
 import ChatMessage from './components/ChatMessage';
 import InputArea from './components/InputArea';
 import LandingPage from './components/LandingPage';
+import RenameModal from './components/RenameModal';
 import { Message, ChatSession } from './types';
-import { streamChatResponse, generateChatTitle } from './services/geminiService';
+import { streamChatResponse, generateChatTitle, generateTitleSuggestions } from './services/geminiService';
 import { Menu, Share2, Check, Copy, X } from 'lucide-react';
 
 // Sound utility
@@ -38,6 +39,10 @@ const App: React.FC = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
   
+  // Renaming State
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+  const [sessionToRename, setSessionToRename] = useState<ChatSession | null>(null);
+
   // Ref for auto-scrolling
   const messagesEndRef = useRef<HTMLDivElement>(null);
   // Ref for auto-save debounce
@@ -137,6 +142,28 @@ const App: React.FC = () => {
         createNewSession();
       }
     }
+  };
+  
+  const handleRenameSessionClick = (session: ChatSession, e: React.MouseEvent) => {
+      e.stopPropagation();
+      setSessionToRename(session);
+      setIsRenameModalOpen(true);
+      if (window.innerWidth < 768) setSidebarOpen(false);
+  };
+
+  const handleRenameSave = (newTitle: string) => {
+      if (sessionToRename) {
+          setSessions(prev => prev.map(s => 
+              s.id === sessionToRename.id ? { ...s, title: newTitle } : s
+          ));
+      }
+      setIsRenameModalOpen(false);
+      setSessionToRename(null);
+  };
+  
+  const handleGenerateSuggestions = async (): Promise<string[]> => {
+      if (!sessionToRename || sessionToRename.messages.length === 0) return [];
+      return await generateTitleSuggestions(sessionToRename.messages);
   };
 
   const handleClearAllSessions = () => {
@@ -315,6 +342,7 @@ const App: React.FC = () => {
         onNewChat={createNewSession}
         onSelectSession={setCurrentSessionId}
         onDeleteSession={deleteSession}
+        onRenameSession={handleRenameSessionClick}
         onClearAll={handleClearAllSessions}
       />
 
@@ -400,6 +428,15 @@ const App: React.FC = () => {
             onSendMessage={handleSendMessage} 
             isLoading={isLoading} 
             onPlaySound={handlePlaySound}
+        />
+
+        {/* Rename Modal */}
+        <RenameModal 
+            isOpen={isRenameModalOpen}
+            onClose={() => setIsRenameModalOpen(false)}
+            currentTitle={sessionToRename?.title || ''}
+            onSave={handleRenameSave}
+            onGenerateSuggestions={handleGenerateSuggestions}
         />
 
         {/* Share Modal */}
